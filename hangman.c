@@ -2,73 +2,94 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <time.h>
 
-void readData(char* , char *[]);
-int testForLetter(char letter);
+int readData(char* , char*[]);
+int testForLetter(char, char*, int);
 int menue();
 
 int main() {
     int lives, i, finish;
-    char wrongLetters[30], rightLetters[30], wordToFind[30], *wordList[] = {"Test", "Secret", "Epic"};
-    //readData("/home/nicklas/Schreibtisch/Schule/PGR_VD/Linux/Hangman/data/wordlist.txt", wordList);
-
+    char wrongLetters[30], rightLetters[30], wordToFind[30], *wordList[100];
 
     int mode = menue();
+    printf("Loading words...\n\n");
+    int words = readData("wordlist.txt", wordList);
 
     lives = 5;
     finish = 0;
 
+	// Modus wählen
     switch (mode){
         char temp[30];
         case 1:
-            printf("Comming Soon...");
-            finish = 1;
+        	srand(time(NULL));
+        	rand()%
             break;
 
         case 2:
             printf("Gib bitte ein Wort ein: ");
             fflush(stdin);
             fgets(temp, 30, stdin);
-            //toupper(temp);
-            printf("%s", toupper('s'));         <-------------
-            finish = 1;
+            for(i = 0; temp[i]; i++){
+            	temp[i] = toupper(temp[i]);
+			}
+			strcpy(wordToFind, temp);
+			printf("%s", wordToFind);
             break;
 
         default:
-            printf("Test");
             break;
     }
-
-/*    do{
- *
- *   }while(!finish && lives);
- */
+    
+    // Das eigentliche Spiel...
+    
+    for(i = 0; i < words; i++){
+    	free(wordList[i]);
+	}
     return 0;
 }
 
 
-void readData(char *path, char *data[]){
-    // TODO:
+int readData(char *path, char *data[]){
     FILE *wordList;
     char buffer[40];
-    int i = 0;
+    int i, j;
+    int words;
 
     wordList = fopen(path, "r");
 
     if (wordList){
         while (fgets(buffer, 40, wordList)){
-            //strcpy(data[i], &buffer);
+        	data[i] = (char *) malloc(40*sizeof(char));
+        	
+        	for(j = 0; buffer[j]; j++){
+        		buffer[j] = toupper(buffer[j]);
+			}
+        	
+        	strcpy(data[i], buffer);
             i++;
         }
     }else
         printf("Konnte Datei %s nicht finden", path);
-    for (int j = 0; j < 6; ++j) {
-        printf("%s", data[j]);
-    }
+        
+    words = i;
+        
+    for(i--; i >= 0; i--){
+		printf("%s", data[i]);
+	}
+	return words;
 }
 
-int testForLetter(char letter) {
-    return 1;
+int testForLetter(char letter, char *sequenze, int length) {
+	int contains = 0;
+	int i = 0;
+	
+	while (sequenze[i] && !contains){
+		if(tolower(sequenze[i]) == tolower(letter)) contains = 1;
+		i++;
+	}
+    return contains;
 }
 
 int menue(){
