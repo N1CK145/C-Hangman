@@ -4,115 +4,128 @@
 #include <ctype.h>
 #include <time.h>
 
-int readData(char* , char*[]);
-int testForLetter(char, char*, int);
-int menue();
-void update(int, char*, char*, int);
+#define WORD_SIZE 10
+
+// Deklarieren von Funktionen
+int readData(char* , char*[]); // Einlesen der "wordlist.txt"
+int testForLetter(char, char*, int); // Testet ob ein Buchstabe in einem String vorhanden ist
+int menue(); // Das Menue des Spieles (Auswahl von Single und Mulitplayer)
+void update(int, char*, char*, int); // Die ausgabe des Aktuellen Spielfeldes
+void selectionsort(int, char[]); // Sortieren 
 
 int main() {
-    int lives, i, finish;
-    char wrongLetters[27], rightLetters[27], wordToFind[30], *wordList[100], input;
+	// Deklarierne von Variablen
+    int words, lives, i, finish, lettersOfWord, mode;
+    char wrongLetters[27], rightLetters[27], wordToFind[WORD_SIZE], *wordList[100], temp[WORD_SIZE], input;
 
-    printf("Loading words...\n\n\n");
-    int words = readData("wordlist.txt", wordList);
-    int mode = menue();
-    int lettersOfWord = 0;
-
-    lives = 11;
-    finish = 0;
-
-
-
+    lettersOfWord = 0;
+    words = readData("wordlist.txt", wordList); // Lese Wörter aus Datei ein
+	if(!words) return words;
 	do{
 		system("cls");
+    	lives = 11;
+		finish = 0;
+		
 		// ALLES RESETEN
-		for(i = 0; i < 30; i++){
+		for(i = 0; i < WORD_SIZE; i++){
+			wordToFind[i] = '\0';
+			temp[i] = '\0';
+		}
+		for(i = 0; i < 27; i++){			
 			wrongLetters[i] = '\0';
 			rightLetters[i] = '\0';
-			wordToFind[i] = '\0';
 		}
 		// Modus wählen
+		mode = menue();
 	    switch (mode){
-	        char temp[30];
-	        case 1:
+	        case 1: // Zufalls-Wort aus "wordlist.txt" (Singleplayer)
+	        	// Ein Zufällieges Wort in "wordToFind" Speichern.
 	        	srand(time(NULL));
 	        	int index = rand() % words;
 	        	strcpy(wordToFind, wordList[index]);
 	        	
-	        	for(i = 0; wordToFind[i] != '\0' && wordToFind[i] != '\n'; i++){
-	            	wordToFind[i] = toupper(wordToFind[i]);
-	            	rightLetters[i] = '_';
-				}
-	        	
-	        	lettersOfWord = 0;
-	        	
-	        	while(wordToFind[lettersOfWord] >= 'A' && wordToFind[lettersOfWord] <= 'Z' ){
-	        		lettersOfWord++;
+	        	// Für jeden Buchstaben einen "_"
+	        	// Wortlänge herrausfinden und speichern
+	        	for(lettersOfWord = 0; wordToFind[lettersOfWord] != '\0' && wordToFind[lettersOfWord] != '\n'; lettersOfWord++){
+	            	wordToFind[lettersOfWord] = toupper(wordToFind[lettersOfWord]);
+	            	rightLetters[lettersOfWord] = '_';
 				}
 	            break;
 	
-	        case 2:
+	        case 2: // Benutzereingabe einen Wortes (Multiplayer)
 	            do{
-	            	printf("Please insert a word: ");
-		            fflush(stdin);
-		            fgets(temp, 30, stdin);
-		            
-		            for(i = 0; temp[i] != '\0' && temp[i] != '\n'; i++){
-		            	temp[i] = toupper(temp[i]);
-		            	rightLetters[i] = '_';
-					}
+	            	// Wort einlesen
 					finish = 1;
+	            	printf("Bitte gib ein Wort ein: ");
+		            fflush(stdin);
+		            fgets(temp, WORD_SIZE, stdin);
+		            // Testen ob Wort zugelassene unzugelassen Buchstaben hat (Zugelassene Buchstaben [A-Z])
 					for(i = 0; temp[i] != '\n' && temp[i] != '\0'; i++){
-		            	if(temp[i] < 'A' || temp[i] > 'Z') finish = 0;
+						temp[i] = toupper(temp[i]);
+		            	if(temp[i] < 'A' || temp[i] > 'Z'){
+		            		finish = 0;	
+		            		printf("%c\n", temp[i]);
+						} 
 					}
-				}while(!finish);
-				finish = 0;
+				}while(!finish); // Wiederhole solange, bis Wort zugelassen ist
 				
-				rightLetters[i] = '\n';
-				strcpy(wordToFind, temp);
-				lettersOfWord = i;
+		        // Für Buchstabe in Wort ein "_"
+		        for(i = 0; temp[i] != '\0' && temp[i] != '\n'; i++){
+		           	rightLetters[i] = '_';
+				}
+				rightLetters[i] = '\0'; // Den String sicherheitshalber noch mal Manuell beenden
+				strcpy(wordToFind, temp); // Speichern des Wortes in "wordToFind"
+				lettersOfWord = i; // Länge des Wortes Speichern
 	            break;
-	
-	        default:
-	            break;
+	            
+	        default:break;
 	    }
 	    
 	    // Das eigentliche Spiel...
-	    
+	    finish = 0;
 	    do{
+	    	// Gebe das aktuelle Spielfeld aus
 	    	update(lives, wrongLetters, rightLetters, lettersOfWord);
+	    	
 	    	do{
-	    		printf("Please insert a char: ");
+	    		// Lese Buchstaben von User ein
+	    		printf("Bitte gib einen Buchstaben ein: ");
 	    		fflush(stdin);
 	    		scanf("%c", &input);
-	    		input = toupper(input);
-	    		if(testForLetter(input, wrongLetters, 27)) input = '0';
-	    		if(testForLetter(input, rightLetters, 27)) input = '0';
-	    		
-			}while(input < 'A' || input > 'Z');
+	    		input = toupper(input); // Formatiere eingabe zu Großbuchstabe
+	    		if(testForLetter(input, wrongLetters, 27)) input = '0'; // Teste ob der Buchstabe schon mal vorgekommen ist
+	    		if(testForLetter(input, rightLetters, 27)) input = '0'; // Teste ob der Buchstabe schon mal vorgekommen ist
+			}while(input < 'A' || input > 'Z'); // Wiederhohle solange die eingabe unzulässig ist (Eingabe außerhalb von [A-Z])
 			
-			if(!testForLetter(input, wordToFind, 27)){ // add letter to wrong letters
+			// Teste ob Buchstabe gesucht wird oder nicht
+			if(!testForLetter(input, wordToFind, 27)){
+				// Aktuallisiere die Falschbuchstabenliste
+				/*
+				Zählen bis jetzt Falscher Eingaben und füge die neue dann hinzu
+				*/
 				for(i = 0; wrongLetters[i]; i++){}
 				wrongLetters[i] = input;
-				lives--;
+				selectionsort(i+1, wrongLetters); // Sortieren der Buchstaben
+				lives--; // Ziehe ein Leben ab
 			}else{
-				for(i = 0; wordToFind[i]; i++){
+				for(i = 0; wordToFind[i]; i++){ // Ersetze die "_" mit dem richtiegen Buchstaben
 					if(wordToFind[i] == input){
 						rightLetters[i] = input;
 					}
 				}
 			}
-			if(!testForLetter('_', rightLetters, 30)) finish = 1; // Teste ob Word gefunden ist.
+			if(!testForLetter('_', rightLetters, WORD_SIZE)) finish = 1; // Teste ob Wort gefunden ist.
 			
-		}while(!finish && lives);
+		}while(!finish && lives); // Wiederhohle solange nicht fertig oder keine Leben mehr
 		system("cls");
-		if(finish){
+		if(finish){ // Wenn keine Leben mehr vorhanden sind -> Verloren
 	   		printf("\t\tGLUECKWUNSCH!\n\tDu hast das Wort gefunden!!!");
-		}else {
+		}else { // Sonst -> Gewonnen
 			printf("\t\tVERLOREN!\n\tDu hast leider keine Leben mehr!");
 		}
 		printf("\n\nMoechtest du nochmal spielen? [Y|N]");
-	}while(toupper(getchar()) == 'Y');
+		fflush(stdin);
+	}while(toupper(getchar()) == 'Y'); // Wiederhohle solange user noch spielen möchte
 	
 	
     // Freigeben des Spiechers
@@ -123,23 +136,29 @@ int main() {
 }
 
 
-int readData(char *path, char *data[]){
+int readData(char *path, char *data[]){ 
+	// Deklarieren
     FILE *wordList;
     char buffer[40];
-    int i, j;
+    int i = 0, j = 0;
     int words;
-
+	// Öffnen der Datei im lese modus
     wordList = fopen(path, "r");
-
-    if (wordList){
-        while (fgets(buffer, 40, wordList)){
-        	data[i] = (char *) malloc(40*sizeof(char));
+    if (wordList){ // Prüfe auf existends der Datie
+        while (fgets(buffer, 40, wordList)){ // Einlesen eine Zeile
+        	data[i] = (char *) malloc(40*sizeof(char)); // Reservieren des Speichers für die Wörter
         	
-        	for(j = 0; buffer[j]; j++){
+        	for(j = 0; buffer[j] && buffer[j] != '\n'; j++){ // Bearbeitung der Buchstaben
         		buffer[j] = toupper(buffer[j]);
+        		if(buffer[j] < 'A' || buffer[j] > 'Z'){  // Überprüfe auf unerlaubte Zeichen
+        			system("cls");
+        			printf("ERROR: Ein unerwartetes Zeichen wurde in \"wordlist.txt\" gefunden. (Zeile %i > '%c')\n", i+1, buffer[j]);
+        			printf("\tPruefe ob alle eingaben korrekt sind.\n");
+        			printf("\tEs sind nur Buchstaben des Englischen Alphabetes erlaubt [A-Z]!");
+        			return 0;
+				}
 			}
-        	
-        	strcpy(data[i], buffer);
+        	strcpy(data[i], buffer); // Kopiere bearbeitete eingabe in "data[i]"
             i++;
         }
     }else
@@ -149,14 +168,12 @@ int readData(char *path, char *data[]){
 }
 
 int testForLetter(char letter, char *sequenze, int length) {
-	int contains = 0;
 	int i = 0;
-	
-	while (sequenze[i] && !contains){
-		if(tolower(sequenze[i]) == tolower(letter)) contains = 1;
+	while (sequenze[i]){ // Gehe jeden einzelnen Buchstaben im String durch
+		if(tolower(sequenze[i]) == tolower(letter)) return 1; // Wenn vorhanden -> gebe 1 zurück
 		i++;
 	}
-    return contains;
+    return 0; // Wenn buchstabe nicht vorhanden -> Gebe 0 zurück
 }
 
 int menue(){
@@ -170,9 +187,10 @@ int menue(){
         printf("Waehle bitte deine Option: ");
 
         fflush(stdin);
-        fgets(input, 3, stdin);
-        x = atoi(input);
-    }while (x < 1 || x > 2);
+        fgets(input, 3, stdin); // Lese eingabe ein ( Als Buchstaben ) 
+        x = atoi(input); // Wandle eingabe in Zahl um
+        
+    }while (x < 1 || x > 2); // Wiederhohle solange eingabe nicht gültig
     return x;
 }
 
@@ -180,14 +198,30 @@ void update(int lives, char *wrongLetters, char *rightLetters, int wordSize){
 	int i;
 	
 	system("cls");
-	printf("\t\tFIND THE WORD!\n\n\n");
-	for(i = 0; i < wordSize; i++){
+	printf("\t\tFinde das Wort!\n\n\n");
+	for(i = 0; i < wordSize; i++){ // Gebe Wort aus (Mit "_" und den Buchstaben) Bsp.: "W _ R T"
 		printf("%c ", rightLetters[i]);
 	}
-	printf("%70s: %i\n\n","lives", lives);
-	printf("Wrong Letters: ");
-	for(i = 0; wrongLetters[i]; i++){
-		printf("%c |", wrongLetters[i]);
+	printf("%70s: %i\n\n","Leben", lives); // Gebe aktuelle Leben aus
+	printf("Falsche Buchstaben: ");
+	for(i = 0; wrongLetters[i]; i++){ // Gebe alle Buchstaben die Falsch eingegeben wurden aus
+		printf("%c | ", wrongLetters[i]);
 	}
 	printf("\n\n");
+}
+
+void selectionsort(int anzahl, char daten[]){
+    int i, k, t, min;
+
+    for( i = 0; i < anzahl-1; i++){
+        min = i;
+        for( k = i+1; k < anzahl; k++){
+            if( daten[k] < daten[min])
+                min = k;
+        }
+
+        t = daten[min];
+        daten[min] = daten[i];
+        daten[i] = t;
+    }
 }
