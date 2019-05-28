@@ -1,7 +1,7 @@
-#Software-Entwicklung Klausur 4.
+Software-Entwicklung Klausur 4.
 
-#Kapitel 1: Die Bewältigung der Basics und ersten Strapazen 
+Kapitel 1: Die Bewältigung der Basics und ersten Strapazen 
 
 Der erste Schritt bei unserem Hangman Programm war die Variablen Deklaration. Als diese vollendet war, begann die Verzweiflung in Nicklas Gesicht zum Vorschein zu treten. Als diese Phase, durch seine tapferen Mitstreiter Marvin „The Rock“ Höck, Enes „Flüchtlingsbandenanführer“ Ünsal und Max „Koma“ Knoben, abgewendet ward, begann die Programmierung der besagten Hangman-Datei. Nun also begann er seine Arbeit an dem Projekt, die bis zu einem gewissen Punkt hervorragend lief, wir wendeten Schleifen an wie junge Götter im antiken Griechenland, Header-Dateien sind ein schlechter Witz für uns, doch auch wir haben Grenzen und als der Zwischenboss Namens „comming soon…“ (So wurde das von unserem Meister Lyriker Nicklas ausformuliert (Deutsch 5 und so (Englisch ist auch nicht besser))) das Programm verwüstete, brachte es uns aus der Spur und fickte den Chef-Programmierer Nicklas deftig in den Anus. Dieser ist nun ziemlich wund. Davon musste sich Maester Nicklas erstmal erholen. Aufgrund dessen beschwor er im Internet ein neues Programm herbei, welches ihm bei seiner großen Aufgabe, das Spiel sie alle zu knechten, helfen sollte. Auch diese Software verhalf ihm nicht weiter, deshalb entschied er sich dazu den Boss-Modus zu aktivieren und Jesus selbst in das Projekt einzubeziehen. Als er von seiner weiten Reise zu Jesu zurückkehrte, war sein Geist fast vollständig geheilt von den verheerenden Ereignissen, die ihn seit seiner Kindheit verfolgten. Nun war er bereit die Datei bei den Eiern zu packen und zu bändigen. 
 
-#Kapitel 2: 
+Kapitel 2: 
